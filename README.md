@@ -144,3 +144,6 @@ src/config/     settings (env-driven)                               scripts/    
 ## Project status
 All seven phases are implemented and tested. See the acceptance checklist at the end of
 [docs/interview_notes.md](docs/interview_notes.md#acceptance-checklist-evidence-not-assertions).
+
+## License
+Released under the [MIT License](LICENSE). The data is synthetic; see the disclaimer at the top of this file.

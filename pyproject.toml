@@ -7,6 +7,7 @@ name = "cloudspend-ai"
 version = "1.0.0"
 description = "Synthetic cloud-spend analytics platform: Snowflake, Streamlit, anomaly detection, forecasting and a grounded finance analyst (portfolio project)"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = [
     "pandas>=3.0",
