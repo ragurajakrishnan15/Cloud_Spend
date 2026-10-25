@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloudspend-ai"
+version = "1.0.0"
+description = "Synthetic cloud-spend analytics platform: Snowflake, Streamlit, anomaly detection, forecasting and a grounded finance analyst (portfolio project)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=3.0",
+    "numpy>=2.0",
+    "python-dotenv>=1.0",
+    "snowflake-connector-python>=3.12",
+    "cryptography>=42",
+    "scikit-learn>=1.5",
+    "statsmodels>=0.14",
+    "streamlit>=1.40",
+    "plotly>=5.20",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+screenshots = ["playwright>=1.40"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["app"]
+markers = ["integration: requires Snowflake credentials (skipped otherwise)"]
+
+[tool.ruff]
+line-length = 120
+src = ["src", "tests", "app"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cloudspend", "config", "components"]

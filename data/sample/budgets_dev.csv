@@ -1,0 +1,121 @@
+budget_month,department,service_name,budget_amount
+2025-01-01,Data Science,Database,2351.43
+2025-01-01,Data Science,Machine Learning,4075.16
+2025-01-01,Data Science,Networking,729.22
+2025-01-01,Engineering,Analytics,310.92
+2025-01-01,Engineering,Compute,2172.84
+2025-01-01,Engineering,Machine Learning,570.48
+2025-01-01,Engineering,Networking,211.88
+2025-01-01,Finance IT,Compute,360.45
+2025-01-01,Finance IT,Machine Learning,2699.78
+2025-01-01,Finance IT,Object Storage,861.8
+2025-01-01,Marketing Tech,Analytics,2896.6
+2025-01-01,Marketing Tech,Machine Learning,426.08
+2025-01-01,Marketing Tech,Monitoring,380.6
+2025-01-01,Marketing Tech,Networking,196.42
+2025-01-01,Platform,Data Warehouse,372.01
+2025-01-01,Platform,Machine Learning,1804.52
+2025-01-01,Platform,Object Storage,467.96
+2025-01-01,Support,Compute,2573.56
+2025-01-01,Support,Machine Learning,1525.2
+2025-01-01,Support,Networking,766.53
+2025-02-01,Data Science,Database,2024.89
+2025-02-01,Data Science,Machine Learning,4066.89
+2025-02-01,Data Science,Networking,603.92
+2025-02-01,Engineering,Analytics,320.95
+2025-02-01,Engineering,Compute,1946.15
+2025-02-01,Engineering,Machine Learning,468.44
+2025-02-01,Engineering,Networking,210.57
+2025-02-01,Finance IT,Compute,290.98
+2025-02-01,Finance IT,Machine Learning,2717.65
+2025-02-01,Finance IT,Object Storage,764.57
+2025-02-01,Marketing Tech,Analytics,3210.95
+2025-02-01,Marketing Tech,Machine Learning,412.65
+2025-02-01,Marketing Tech,Monitoring,346.94
+2025-02-01,Marketing Tech,Networking,173.87
+2025-02-01,Platform,Data Warehouse,371.62
+2025-02-01,Platform,Machine Learning,2165.21
+2025-02-01,Platform,Object Storage,469.39
+2025-02-01,Support,Compute,1980.64
+2025-02-01,Support,Machine Learning,1546.42
+2025-02-01,Support,Networking,696.29
+2025-03-01,Data Science,Database,2554.27
+2025-03-01,Data Science,Machine Learning,4424.22
+2025-03-01,Data Science,Networking,664.52
+2025-03-01,Engineering,Analytics,359.52
+2025-03-01,Engineering,Compute,2335.61
+2025-03-01,Engineering,Machine Learning,578.7
+2025-03-01,Engineering,Networking,249.71
+2025-03-01,Finance IT,Compute,335.74
+2025-03-01,Finance IT,Machine Learning,2942.69
+2025-03-01,Finance IT,Object Storage,1022.77
+2025-03-01,Marketing Tech,Analytics,3171.08
+2025-03-01,Marketing Tech,Machine Learning,505.39
+2025-03-01,Marketing Tech,Monitoring,329.35
+2025-03-01,Marketing Tech,Networking,225.93
+2025-03-01,Platform,Data Warehouse,357.68
+2025-03-01,Platform,Machine Learning,2266.19
+2025-03-01,Platform,Object Storage,702.09
+2025-03-01,Support,Compute,2564.19
+2025-03-01,Support,Machine Learning,1877.52
+2025-03-01,Support,Networking,872.11
+2025-04-01,Data Science,Database,2610.66
+2025-04-01,Data Science,Machine Learning,4631.65
+2025-04-01,Data Science,Networking,808.56
+2025-04-01,Engineering,Analytics,374.13
+2025-04-01,Engineering,Compute,2605.08
+2025-04-01,Engineering,Machine Learning,575.26
+2025-04-01,Engineering,Networking,240.41
+2025-04-01,Finance IT,Compute,423.61
+2025-04-01,Finance IT,Machine Learning,2761.99
+2025-04-01,Finance IT,Object Storage,863.22
+2025-04-01,Marketing Tech,Analytics,3743.51
+2025-04-01,Marketing Tech,Machine Learning,448.02
+2025-04-01,Marketing Tech,Monitoring,327.55
+2025-04-01,Marketing Tech,Networking,217.74
+2025-04-01,Platform,Data Warehouse,410.28
+2025-04-01,Platform,Machine Learning,2265.31
+2025-04-01,Platform,Object Storage,641.71
+2025-04-01,Support,Compute,2650.73
+2025-04-01,Support,Machine Learning,1810.02
+2025-04-01,Support,Networking,885.81
+2025-05-01,Data Science,Database,2357.88
+2025-05-01,Data Science,Machine Learning,4622.28
+2025-05-01,Data Science,Networking,704.1
+2025-05-01,Engineering,Analytics,321.38
+2025-05-01,Engineering,Compute,2679.75
+2025-05-01,Engineering,Machine Learning,666.96
+2025-05-01,Engineering,Networking,259.09
+2025-05-01,Finance IT,Compute,404.8
+2025-05-01,Finance IT,Machine Learning,3300.4
+2025-05-01,Finance IT,Object Storage,1022.45
+2025-05-01,Marketing Tech,Analytics,3333.29
+2025-05-01,Marketing Tech,Machine Learning,427.97
+2025-05-01,Marketing Tech,Monitoring,375.36
+2025-05-01,Marketing Tech,Networking,229.77
+2025-05-01,Platform,Data Warehouse,417.28
+2025-05-01,Platform,Machine Learning,2079.59
+2025-05-01,Platform,Object Storage,693.77
+2025-05-01,Support,Compute,2584.12
+2025-05-01,Support,Machine Learning,2029.36
+2025-05-01,Support,Networking,783.65
+2025-06-01,Data Science,Database,2321.8
+2025-06-01,Data Science,Machine Learning,4465.84
+2025-06-01,Data Science,Networking,648.36
+2025-06-01,Engineering,Analytics,317.77
+2025-06-01,Engineering,Compute,2057.11
+2025-06-01,Engineering,Machine Learning,515.35
+2025-06-01,Engineering,Networking,224.71
+2025-06-01,Finance IT,Compute,336.23
+2025-06-01,Finance IT,Machine Learning,2787.63
+2025-06-01,Finance IT,Object Storage,958.02
+2025-06-01,Marketing Tech,Analytics,2870.93
+2025-06-01,Marketing Tech,Machine Learning,457.74
+2025-06-01,Marketing Tech,Monitoring,382.4
+2025-06-01,Marketing Tech,Networking,191.06
+2025-06-01,Platform,Data Warehouse,358.96
+2025-06-01,Platform,Machine Learning,1914.98
+2025-06-01,Platform,Object Storage,496.28
+2025-06-01,Support,Compute,2282.73
+2025-06-01,Support,Machine Learning,1541.87
+2025-06-01,Support,Networking,805.52

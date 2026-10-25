@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==9.1.1
+ruff==0.17.2
+# Only needed to regenerate docs/screenshots (drives the installed Microsoft Edge); see scripts/capture_screenshots.py
+playwright==1.64.1
