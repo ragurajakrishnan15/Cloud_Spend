@@ -46,16 +46,20 @@ files. An integration test asserts that answers are identical from Snowflake and
 6 Potential optimization actions, 7 Follow-up questions and data limitations. Downloadable as Markdown from the page.
 
 ## Optional LLM provider
-`LLM_PROVIDER=none` is the default; nothing is sent anywhere. One adapter ships, for Anthropic Claude:
+`LLM_PROVIDER=none` is the default; nothing is sent anywhere. Two adapters ship: Anthropic Claude and Google Gemini (REST, no extra package).
+
+Gemini: put `LLM_PROVIDER=gemini`, `LLM_API_KEY=<key>` (and optionally `LLM_MODEL`, default `gemini-2.5-flash`) in the git-ignored `.env`.
+Claude: `pip install -e ".[ai]"` and use `LLM_PROVIDER=anthropic`.
 
 ```powershell
-pip install -e ".[ai]"
-$env:LLM_PROVIDER = "anthropic"; $env:LLM_API_KEY = "<your key>"      # optional: $env:LLM_MODEL
-python scripts/eval_llm_grounding.py --provider anthropic --runs 3 --out docs/llm_grounding_eval.md
+python scripts/eval_llm_grounding.py --provider gemini --runs 3 --out docs/llm_grounding_eval.md
 ```
 
+The key is sent in a request header, never in a URL, and error messages report only the HTTP status. Free-tier Gemini keys may
+log or use prompts for product improvement; the prompts contain only synthetic figures.
+
 Enabling it sends the computed figures and small result tables (never credentials) to that API and costs API usage, so it is
-opt-in. The adapter is unit-tested with a fake client only; **no live API run has been recorded in this repository**. The
+opt-in. The adapters are unit-tested with fakes only; **no live API run has been recorded in this repository**. The
 evaluation script measures how often the model's wording passes the numeric-grounding check; run it before quoting any
 acceptance rate. Another provider is any object with `name` and `complete(system, user) -> str`, registered in `ai.llm.get_provider`.
 

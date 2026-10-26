@@ -124,7 +124,7 @@ not evidence of performance on real billing data.
   tool runs. A test asserts no other tool can be called.
 - **Every number is traceable.** Each tool returns an evidence ledger (value, unit, source). Narratives can only print ledger
   values; any optional LLM text is rejected unless every number matches the ledger. The LLM layer is off by default
-  (`LLM_PROVIDER=none`); an optional Anthropic adapter exists (see [AI analyst design](docs/ai_analyst.md#optional-llm-provider)).
+  (`LLM_PROVIDER=none`); optional Gemini and Anthropic adapters exist (see [AI analyst design](docs/ai_analyst.md#optional-llm-provider)).
 - **A multi-step investigation agent stays inside the same limits.** "Investigate ..." runs a bounded, rule-based sequence of the
   same approved tools, each step chosen from earlier results and traced (tool, arguments, reason, status, timing).
 - **Unsupported savings are never estimated** — recommendations show "Requires investigation" unless a stated formula applies.
