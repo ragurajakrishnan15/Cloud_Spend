@@ -59,9 +59,11 @@ The key is sent in a request header, never in a URL, and error messages report o
 log or use prompts for product improvement; the prompts contain only synthetic figures.
 
 Enabling it sends the computed figures and small result tables (never credentials) to that API and costs API usage, so it is
-opt-in. The adapters are unit-tested with fakes only; **no live API run has been recorded in this repository**. The
-evaluation script measures how often the model's wording passes the numeric-grounding check; run it before quoting any
-acceptance rate. Another provider is any object with `name` and `complete(system, user) -> str`, registered in `ai.llm.get_provider`.
+opt-in. The adapters are unit-tested with fakes. A few live Gemini calls were made during development: in a first run 6 of 7
+example questions passed the grounding check, and the one rejection exposed a prompt problem (the model quoted table-only numbers),
+which the system prompt now forbids. Free-tier rate limits then prevented a complete, repeatable measurement, so **no
+acceptance rate is claimed**. The evaluation script (which reports provider errors separately from grounding rejections)
+measures it; run it with a key that has quota before quoting any rate. Another provider is any object with `name` and `complete(system, user) -> str`, registered in `ai.llm.get_provider`.
 
 ## Limits to remember
 - Routing is keyword-based: unusual phrasings fall back to `unsupported` rather than guessing.
