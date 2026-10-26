@@ -20,6 +20,7 @@ SUPPORTED_QUESTIONS = [
     "Give me the current forecast and its limitations.",
     "What optimization actions should we review?",
     "Draft a QBR summary for the selected period.",
+    "Investigate the cost increase in depth (multi-step analysis).",
 ]
 
 NUM_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10}
@@ -34,6 +35,8 @@ _BLOCKED = [
 ]
 _RULES = [  # priority order
     ("qbr", re.compile(r"\bqbr\b|quarterly (business )?review|executive summary|business review", re.I)),
+    ("investigate", re.compile(r"investigat|deep[- ]?dive|root[- ]?cause|dig (in|into)|walk me through|full (analysis|picture)|"
+                               r"comprehensive|end[- ]to[- ]end analysis|what(?:'s| is) going on", re.I)),
     ("forecast", re.compile(r"forecast|predict|projection|projected|next month|end of (the )?month|expected (spend|cost)", re.I)),
     ("anomalies", re.compile(r"anomal|unusual|outlier|spike|flagged|irregular", re.I)),
     ("recommendations", re.compile(r"recommend|optimi[sz]|saving|reduce (our )?(cost|spend)|cut (cost|spend)|waste|opportunit", re.I)),

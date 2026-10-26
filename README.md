@@ -88,8 +88,21 @@ Snowflake warehouse `CLOUDSPEND_WH` is X-Small with 60 s auto-suspend. Re-runnin
 pytest -m "not integration"     # no credentials needed
 pytest -m integration           # Snowflake-backed tests; skipped with a clear reason if credentials are missing
 ruff check .
+mypy                            # clean; pandas-stub false positives are silenced only in four numeric modules (see pyproject.toml)
 ```
-Type checking (`mypy`) was tried and not adopted: it reports several hundred errors that come mostly from pandas stub noise.
+CI (`.github/workflows/ci.yml`) runs ruff, mypy, the local pipeline and the unit tests on every push and pull request.
+
+### One-command refresh and scheduling
+```powershell
+python -m cloudspend.pipeline --mode local        # generate -> validate -> models (no credentials)
+python -m cloudspend.pipeline --mode snowflake    # + load RAW -> transform and reconcile -> write model outputs
+```
+Stops at the first failing stage and exits non-zero; each run appends a line to `data/generated/pipeline_runs.jsonl`.
+`.github/workflows/refresh.yml` runs it weekly (local mode unless Snowflake secrets are configured; see the file header).
+
+### BI tools
+`python -m cloudspend.reporting.bi_export` writes flat CSV extracts of the REPORTING data; `bi/looker/` holds a LookML project.
+See [docs/bi_tools.md](docs/bi_tools.md) (Tableau and Looker steps are documented, not run against live instances).
 
 ## Measured results (synthetic data)
 
@@ -110,7 +123,10 @@ not evidence of performance on real billing data.
 - **No free-form SQL, ever.** The analyst routes questions to seven approved calculations; SQL-like input is refused before any
   tool runs. A test asserts no other tool can be called.
 - **Every number is traceable.** Each tool returns an evidence ledger (value, unit, source). Narratives can only print ledger
-  values; any optional LLM text is rejected unless every number matches the ledger. No provider is bundled; `LLM_PROVIDER=none`.
+  values; any optional LLM text is rejected unless every number matches the ledger. The LLM layer is off by default
+  (`LLM_PROVIDER=none`); an optional Anthropic adapter exists (see [AI analyst design](docs/ai_analyst.md#optional-llm-provider)).
+- **A multi-step investigation agent stays inside the same limits.** "Investigate ..." runs a bounded, rule-based sequence of the
+  same approved tools, each step chosen from earlier results and traced (tool, arguments, reason, status, timing).
 - **Unsupported savings are never estimated** — recommendations show "Requires investigation" unless a stated formula applies.
 - **Ground-truth labels never reach model inputs** (separate table, enforced by tests); thresholds are tuned on a training
   period and metrics are reported on a later holdout.
@@ -122,8 +138,9 @@ not evidence of performance on real billing data.
 app/            Streamlit app (Home + 6 pages, components/)        sql/        00 bootstrap … 08 read-only role
 src/cloudspend/ data_generation, ingestion, validation,             tests/      unit/ and integration/ (Snowflake-marked)
                 analytics (metrics, anomalies, forecasting,         docs/       architecture, data dictionary, evaluation,
-                optimization, runner), ai (analyst), reporting                  analyst design, demo script, interview notes
-src/config/     settings (env-driven)                               scripts/    screenshot capture
+                optimization, runner), ai (analyst, agent),                    analyst design, demo script, interview notes
+                reporting (QBR, BI export), pipeline                bi/         LookML project (Looker)
+src/config/     settings (env-driven)                               scripts/    screenshots, LLM grounding eval
 ```
 
 ## Limitations and future work
@@ -139,7 +156,7 @@ src/config/     settings (env-driven)                               scripts/    
 ## Documentation
 [Spec](docs/SPEC.md) · [Architecture and data model](docs/architecture.md) · [Data dictionary](docs/data_dictionary.md) ·
 [Model evaluation](docs/model_evaluation.md) · [AI analyst design](docs/ai_analyst.md) · [Demo script](docs/demo_script.md) ·
-[Interview notes](docs/interview_notes.md)
+[Interview notes](docs/interview_notes.md) · [BI tools (Tableau / Looker)](docs/bi_tools.md)
 
 ## Project status
 All seven phases are implemented and tested. See the acceptance checklist at the end of

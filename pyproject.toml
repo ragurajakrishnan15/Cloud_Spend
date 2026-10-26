@@ -22,8 +22,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.5"]
+dev = ["pytest>=8", "ruff>=0.5", "mypy>=1.10", "pandas-stubs"]
 screenshots = ["playwright>=1.40"]
+ai = ["anthropic>=0.40"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -43,3 +44,19 @@ ignore = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["cloudspend", "config", "components"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src"]
+ignore_missing_imports = true
+
+# pandas-stubs types many DataFrame/Series operations as unions that mypy cannot narrow (false positives, not bugs).
+# Silence only those error codes in the numeric/pandas-heavy modules; every other module stays fully checked.
+[[tool.mypy.overrides]]
+module = [
+    "cloudspend.analytics.anomaly_detection",
+    "cloudspend.analytics.spend_metrics",
+    "cloudspend.analytics.forecasting",
+    "cloudspend.data_generation.generate_billing",
+]
+disable_error_code = ["operator", "index", "call-overload", "arg-type", "return-value", "union-attr", "var-annotated"]

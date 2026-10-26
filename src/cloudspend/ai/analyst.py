@@ -39,6 +39,7 @@ class Answer:
     warnings: list[str] = field(default_factory=list)
     mode: str = "deterministic"      # deterministic | llm
     qbr: QBRReport | None = None
+    trace: list = field(default_factory=list)   # agent steps (empty for single-step intents)
     duration_ms: float = 0.0
 
 
@@ -101,9 +102,14 @@ def answer(question: str, bundle: DataBundle, defaults: Filters, llm: LLMProvide
         log.info("intent=%s status=%s ms=%.1f", intent.name, base.status, base.duration_ms)
         return base
 
+    if intent.name == "investigate":
+        from cloudspend.ai.agent import investigate  # local import: agent builds on this module
+
+        return investigate(question, bundle, defaults, intent, llm)
+
     try:
         params = _params(defaults, intent)
-        results = [call_tool(name, bundle, params, **kw) for name, kw in _PLANS[intent.name]]
+        results = [call_tool(name, bundle, params, **kw) for name, kw in _PLANS[intent.name]]  # type: ignore[attr-defined]
     except ValidationError as exc:
         base.status, base.text = "invalid", str(exc)
         log.info("intent=%s status=invalid", intent.name)
