@@ -1,5 +1,10 @@
 """Page 6 - AI Finance Analyst: grounded Q&A and QBR drafts over approved analytical functions."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))  # `cloudspend` / `config` importable without pip install
+
 import pandas as pd
 import streamlit as st
 

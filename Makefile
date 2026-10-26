@@ -27,4 +27,4 @@ pipeline:
 bi-export:
 	python -m cloudspend.reporting.bi_export
 eval-llm:
-	python scripts/eval_llm_grounding.py --provider anthropic
+	python scripts/eval_llm_grounding.py --provider gemini

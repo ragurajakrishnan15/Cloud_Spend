@@ -1,5 +1,10 @@
 """Page 1 - Spend Overview."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))  # `cloudspend` / `config` importable without pip install
+
 import streamlit as st
 
 from cloudspend.analytics.spend_metrics import (

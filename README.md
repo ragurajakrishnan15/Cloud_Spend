@@ -124,7 +124,7 @@ not evidence of performance on real billing data.
   tool runs. A test asserts no other tool can be called.
 - **Every number is traceable.** Each tool returns an evidence ledger (value, unit, source). Narratives can only print ledger
   values; any optional LLM text is rejected unless every number matches the ledger. The LLM layer is off by default
-  (`LLM_PROVIDER=none`); an optional Anthropic adapter exists (see [AI analyst design](docs/ai_analyst.md#optional-llm-provider)).
+  (`LLM_PROVIDER=none`); optional Gemini and Anthropic adapters exist (see [AI analyst design](docs/ai_analyst.md#optional-llm-provider)).
 - **A multi-step investigation agent stays inside the same limits.** "Investigate ..." runs a bounded, rule-based sequence of the
   same approved tools, each step chosen from earlier results and traced (tool, arguments, reason, status, timing).
 - **Unsupported savings are never estimated** — recommendations show "Requires investigation" unless a stated formula applies.
@@ -156,7 +156,7 @@ src/config/     settings (env-driven)                               scripts/    
 ## Documentation
 [Spec](docs/SPEC.md) · [Architecture and data model](docs/architecture.md) · [Data dictionary](docs/data_dictionary.md) ·
 [Model evaluation](docs/model_evaluation.md) · [AI analyst design](docs/ai_analyst.md) · [Demo script](docs/demo_script.md) ·
-[Interview notes](docs/interview_notes.md) · [BI tools (Tableau / Looker)](docs/bi_tools.md)
+[Interview notes](docs/interview_notes.md) · [BI tools (Tableau / Looker)](docs/bi_tools.md) · [Deploying the demo](docs/deploy.md)
 
 ## Project status
 All seven phases are implemented and tested. See the acceptance checklist at the end of
