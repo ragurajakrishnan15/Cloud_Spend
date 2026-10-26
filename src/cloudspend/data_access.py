@@ -47,7 +47,7 @@ def _query(sql: str) -> pd.DataFrame:
         try:
             cur.execute("USE WAREHOUSE CLOUDSPEND_WH")
             cur.execute(f"{sql} LIMIT {MAX_ROWS}")
-            df = pd.DataFrame(cur.fetchall(), columns=[c[0].lower() for c in cur.description])
+            df = pd.DataFrame(cur.fetchall(), columns=[c[0].lower() for c in (cur.description or [])])
         finally:
             cur.close()
     for col in df.columns:  # Decimal -> float for numeric columns

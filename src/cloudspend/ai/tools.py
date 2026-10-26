@@ -276,7 +276,7 @@ def get_forecast(bundle: DataBundle, params: ToolParams) -> ToolResult:
     L.add("horizon_days", "Forecast horizon", len(ets), "days", f"{src}: days forecast")
     L.add("interval_level", "Prediction interval level", 0.80, "pct", f"{src}: ETS prediction interval (alpha = 0.20)")
     months = []
-    for m in month_projections(hist, ets.set_index("forecast_date")["forecast_cost"].astype(float), budgets):
+    for m in month_projections(hist, ets.set_index("forecast_date")["forecast_cost"].astype(float), budgets):  # type: ignore[arg-type]
         if not m["fully_covered"] or m["days_forecast"] == 0:   # only months that include forecast days are projections
             continue
         key = f"{m['month']:%Y_%m}"
@@ -351,7 +351,7 @@ def get_optimization_recommendations(bundle: DataBundle, params: ToolParams) -> 
     items = []
     for i, row in enumerate(recs.head(p.top_n).itertuples()):
         try:
-            ev = json.loads(row.evidence)
+            ev = json.loads(str(row.evidence))
         except (TypeError, ValueError):
             ev = {}
         fields = []

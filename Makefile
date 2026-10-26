@@ -1,4 +1,4 @@
-.PHONY: data validate test integration lint app models seeds report screenshots
+.PHONY: data validate test integration lint typecheck app models seeds report screenshots pipeline bi-export eval-llm
 
 data:
 	python -m cloudspend.data_generation.generate_billing --profile demo
@@ -20,3 +20,11 @@ report:
 	python -m cloudspend.analytics.eval_report
 screenshots:
 	python scripts/capture_screenshots.py
+typecheck:
+	mypy
+pipeline:
+	python -m cloudspend.pipeline --mode local
+bi-export:
+	python -m cloudspend.reporting.bi_export
+eval-llm:
+	python scripts/eval_llm_grounding.py --provider anthropic

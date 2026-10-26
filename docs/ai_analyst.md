@@ -19,6 +19,24 @@ The analyst answers finance questions from **verified calculations**. It works f
    otherwise the deterministic summary is shown with a warning. QBRs are always deterministic.
 7. **Logging**: intent, tool names, status and timing only; no question text, no secrets.
 
+## Multi-step investigation (`ai/agent.py`)
+"Investigate ...", "deep dive", "root cause" and similar questions route to a bounded agent instead of a single tool. The plan is
+rule-based and adapts to earlier results:
+
+1. `get_spend_summary` - period total, change vs the previous period, budget position.
+2. If spend moved by >= 5%: `get_top_cost_drivers` by service and by department, then a **drill-down** into the departments
+   driving the largest service. If there is no comparable previous period, or the move is small, these steps are *skipped* and the
+   reason is recorded.
+3. `get_budget_variance`, then `get_anomalies`; if anything is flagged and a top driver exists, `get_anomalies` is called again
+   restricted to that driver as a **cross-check** (stated as a coincidence to review, never a cause).
+4. `get_forecast`; and `get_optimization_recommendations` only if the period is over budget or has flagged records.
+
+Safety properties (each covered by `tests/unit/test_ai_agent.py`): only registered tools are called with validated parameters;
+a step budget (default 8) bounds the run and is disclosed when hit; a failing step is recorded and the run continues; every
+figure is namespaced in one ledger (`s<step>.<id>`) so optional LLM wording is still grounded; the full trace (step, tool,
+arguments, reason, status, time) is shown in the UI under "How this answer was produced". It is an orchestration of approved
+calculations, not an autonomous agent: it cannot call anything outside `TOOLS`, write data, or run SQL.
+
 ## Data access
 The analyst reads the same REPORTING views as the dashboard (read-only login when `SNOWFLAKE_APP_*` is configured) or the local
 files. An integration test asserts that answers are identical from Snowflake and local data.
@@ -27,10 +45,19 @@ files. An integration test asserts that answers are identical from Snowflake and
 1 Executive summary, 2 Spending and budget performance, 3 Largest cost drivers, 4 Significant anomalies, 5 Forecast and risks,
 6 Potential optimization actions, 7 Follow-up questions and data limitations. Downloadable as Markdown from the page.
 
-## Enabling an LLM provider (not included)
-`LLM_PROVIDER=none` is the default and no provider SDK is a dependency. A provider is any object with `name` and
-`complete(system: str, user: str) -> str`; register it in `ai.llm.get_provider`. Choosing one is a cost and data-policy decision
-(the synthetic figures and table rows are sent to the provider), so it is deliberately left as a separate step.
+## Optional LLM provider
+`LLM_PROVIDER=none` is the default; nothing is sent anywhere. One adapter ships, for Anthropic Claude:
+
+```powershell
+pip install -e ".[ai]"
+$env:LLM_PROVIDER = "anthropic"; $env:LLM_API_KEY = "<your key>"      # optional: $env:LLM_MODEL
+python scripts/eval_llm_grounding.py --provider anthropic --runs 3 --out docs/llm_grounding_eval.md
+```
+
+Enabling it sends the computed figures and small result tables (never credentials) to that API and costs API usage, so it is
+opt-in. The adapter is unit-tested with a fake client only; **no live API run has been recorded in this repository**. The
+evaluation script measures how often the model's wording passes the numeric-grounding check; run it before quoting any
+acceptance rate. Another provider is any object with `name` and `complete(system, user) -> str`, registered in `ai.llm.get_provider`.
 
 ## Limits to remember
 - Routing is keyword-based: unusual phrasings fall back to `unsupported` rather than guessing.

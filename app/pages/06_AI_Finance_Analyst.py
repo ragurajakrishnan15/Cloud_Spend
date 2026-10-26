@@ -18,6 +18,7 @@ EXAMPLES = [
     "Summarize the three highest-impact anomalies.",
     "Give me the current forecast and its limitations.",
     "Draft a QBR summary for the selected period.",
+    "Investigate the cost increase in depth.",
 ]
 
 
@@ -124,5 +125,11 @@ if ans.results:
     with st.expander("How this answer was produced"):
         st.markdown(f"- **Intent:** `{ans.intent}` (rule-based routing)\n- **Mode:** {ans.mode}\n"
                     f"- **Total time:** {ans.duration_ms:.0f} ms")
-        st.dataframe(pd.DataFrame([{"Tool": r.tool, "Status": r.status, "Time (ms)": round(r.duration_ms, 1)}
-                                   for r in ans.results]), hide_index=True)
+        if ans.trace:
+            st.caption("Agent trace: each step was chosen from the results of the earlier ones; skipped steps show why.")
+            st.dataframe(pd.DataFrame([{"Step": s.n, "Tool": s.tool, "Arguments": s.arguments, "Why": s.reason,
+                                        "Status": s.status, "Time (ms)": round(s.duration_ms, 1)} for s in ans.trace]),
+                         hide_index=True, use_container_width=True)
+        else:
+            st.dataframe(pd.DataFrame([{"Tool": r.tool, "Status": r.status, "Time (ms)": round(r.duration_ms, 1)}
+                                       for r in ans.results]), hide_index=True)

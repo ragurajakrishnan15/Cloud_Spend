@@ -1,0 +1,57 @@
+name: Scheduled refresh
+
+# Weekly refresh of the synthetic dataset and model outputs. Runs the same pipeline you run locally.
+# - Without Snowflake secrets it runs in local mode (CSV -> validation -> models) and uploads the outputs as an artifact.
+# - With the secrets below configured it also loads RAW, rebuilds ANALYTICS/REPORTING, reconciles and writes model outputs.
+#   Secrets: SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_ROLE, SNOWFLAKE_WAREHOUSE, SNOWFLAKE_PRIVATE_KEY (PEM text),
+#   optional SNOWFLAKE_PRIVATE_KEY_PASSPHRASE. Use a dedicated least-privilege role; a refresh consumes warehouse credits.
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "local or snowflake (default: snowflake if secrets exist, else local)"
+        required: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      SNOWFLAKE_PRIVATE_KEY_PASSPHRASE: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}
+      SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt && pip install -e . --no-deps
+      - name: Choose mode and prepare credentials
+        id: mode
+        env:
+          INPUT_MODE: ${{ github.event.inputs.mode }}
+        run: |
+          mode="$INPUT_MODE"
+          case "$mode" in ""|local|snowflake) ;; *) echo "mode must be local or snowflake"; exit 2;; esac
+          if [ -z "$mode" ]; then
+            if [ -n "$SNOWFLAKE_ACCOUNT" ] && [ -n "$SNOWFLAKE_PRIVATE_KEY" ]; then mode=snowflake; else mode=local; fi
+          fi
+          if [ "$mode" = "snowflake" ]; then
+            umask 077
+            printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$RUNNER_TEMP/sf_key.p8"
+            echo "SNOWFLAKE_PRIVATE_KEY_PATH=$RUNNER_TEMP/sf_key.p8" >> "$GITHUB_ENV"
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - run: python -m cloudspend.pipeline --mode ${{ steps.mode.outputs.mode }} --regenerate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-run
+          path: |
+            data/generated/pipeline_runs.jsonl
+            data/generated/model_outputs/

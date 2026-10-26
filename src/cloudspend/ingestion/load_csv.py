@@ -72,7 +72,7 @@ def _record_issues(cur, run_id: str, report: ValidationReport) -> None:
 def load(billing_path: Path, budgets_path: Path | None, setup: bool = False) -> int:
     billing = pd.read_csv(billing_path)
     report = validate_billing(billing)
-    budgets = None
+    budgets: pd.DataFrame | None = None
     if budgets_path:
         budgets = pd.read_csv(budgets_path)
         brep = validate_budgets(budgets, billing)
@@ -110,17 +110,17 @@ def load(billing_path: Path, budgets_path: Path | None, setup: bool = False) -> 
                 "SELECT COUNT(*), SUM(TOTAL_COST) FROM CLOUDSPEND_AI.RAW.CLOUD_BILLING_RAW WHERE SOURCE_FILE=%s",
                 (billing_path.name,),
             )
-            raw_rows, raw_sum = cur.fetchone()
+            raw_rows, raw_sum = cur.fetchone() or (0, 0)
             raw_sum = Decimal(raw_sum or 0)
 
-            if budgets_path:
+            if budgets_path and budgets is not None:
                 _stage_and_copy(cur, budgets_path, "TMP_BUDGETS", ", ".join(f"{c} VARCHAR" for c in BUDGET_COLS))
                 cur.execute(_merge_budgets_sql(), {"f": budgets_path.name})
                 cur.execute(
                     "SELECT COUNT(*), SUM(BUDGET_AMOUNT) FROM CLOUDSPEND_AI.RAW.BUDGETS_RAW WHERE SOURCE_FILE=%s",
                     (budgets_path.name,),
                 )
-                b_rows, b_sum = cur.fetchone()
+                b_rows, b_sum = cur.fetchone() or (0, 0)
                 budget_problems = []
                 if b_rows != len(budgets):
                     budget_problems.append(f"raw budget rows {b_rows} != file rows {len(budgets)}")

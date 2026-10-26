@@ -91,9 +91,9 @@ def compute(records: pd.DataFrame, labels: pd.DataFrame, budgets: pd.DataFrame, 
                                           "region_name", "resource_id"]]
     anomalies = rows.join(ctx, on="record_id")
 
-    series = {"total": ("total", records.groupby("usage_date")["total_cost"].sum())}
+    series: dict[str, tuple[str, pd.Series]] = {"total": ("total", records.groupby("usage_date")["total_cost"].sum())}
     for dep, g in records.groupby("department_name"):
-        series[dep] = ("department", g.groupby("usage_date")["total_cost"].sum())
+        series[str(dep)] = ("department", g.groupby("usage_date")["total_cost"].sum())
     fr = fc.run_pipeline(series)
 
     daily = daily_from_records(records)

@@ -128,7 +128,7 @@ def run_pipeline(series_by_scope: dict[str, tuple[str, pd.Series]], horizon: int
             for d, r in fc.iterrows():
                 rows.append({
                     "model_name": name, "model_version": MODEL_VERSION, "scope_type": scope_type,
-                    "scope_value": scope_value, "forecast_date": d.date(),
+                    "scope_value": scope_value, "forecast_date": pd.Timestamp(d).date(),
                     "forecast_cost": round(float(r["mean"]), 2),
                     "lower_bound": None if pd.isna(r["lower"]) else round(float(r["lower"]), 2),
                     "upper_bound": None if pd.isna(r["upper"]) else round(float(r["upper"]), 2),
