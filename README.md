@@ -156,7 +156,7 @@ src/config/     settings (env-driven)                               scripts/    
 ## Documentation
 [Spec](docs/SPEC.md) · [Architecture and data model](docs/architecture.md) · [Data dictionary](docs/data_dictionary.md) ·
 [Model evaluation](docs/model_evaluation.md) · [AI analyst design](docs/ai_analyst.md) · [Demo script](docs/demo_script.md) ·
-[Interview notes](docs/interview_notes.md) · [BI tools (Tableau / Looker)](docs/bi_tools.md)
+[Interview notes](docs/interview_notes.md) · [BI tools (Tableau / Looker)](docs/bi_tools.md) · [Deploying the demo](docs/deploy.md)
 
 ## Project status
 All seven phases are implemented and tested. See the acceptance checklist at the end of
