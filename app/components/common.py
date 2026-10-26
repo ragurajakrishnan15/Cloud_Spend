@@ -14,6 +14,13 @@ from components.filters import render_global_filters
 DISCLAIMER = "All data is **synthetic**. Not real billing data; no real savings or outcomes are implied."
 
 
+@st.cache_resource(show_spinner="First run: building the synthetic demo data and models (about 20 seconds)...")
+def _prepare_local_data() -> list[str]:
+    from cloudspend.bootstrap import ensure_demo_data
+
+    return ensure_demo_data()
+
+
 @st.cache_data(ttl=600, show_spinner="Loading data...")
 def _load_all() -> tuple[pd.DataFrame, pd.DataFrame, data_access.SourceInfo]:
     return data_access.load_daily(), data_access.load_budget_variance(), data_access.load_refresh_info()
@@ -30,6 +37,8 @@ class Context:
 def setup_page(title: str, icon: str = ":bar_chart:") -> Context:
     st.set_page_config(page_title=f"CloudSpend AI - {title}", page_icon=icon, layout="wide")
     try:
+        if data_access.resolve_mode() == "local":
+            _prepare_local_data()
         daily, bv, source = _load_all()
     except data_access.DataUnavailableError as exc:
         st.error(str(exc))

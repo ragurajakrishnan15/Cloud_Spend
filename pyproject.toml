@@ -42,6 +42,9 @@ src = ["src", "tests", "app"]
 select = ["E", "F", "I", "UP"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+"app/**" = ["E402"]   # app scripts add src/ to sys.path before importing the package
+
 [tool.ruff.lint.isort]
 known-first-party = ["cloudspend", "config", "components"]
 

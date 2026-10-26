@@ -1,5 +1,10 @@
 """Page 3 - Anomaly Detection (reads stored model outputs written by run_models)."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))  # `cloudspend` / `config` importable without pip install
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st

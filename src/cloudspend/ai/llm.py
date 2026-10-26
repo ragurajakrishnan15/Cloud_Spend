@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from collections.abc import Callable
@@ -62,15 +63,26 @@ DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"   # override with LLM_MODEL if your ke
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 
-def _http_post(url: str, headers: dict[str, str], body: dict, timeout: float = 30.0) -> dict:
+RETRY_STATUSES = (429, 500, 503)
+MAX_ATTEMPTS = 4
+BACKOFF_SECONDS = 4.0   # 4s, 8s, 16s between attempts; free-tier keys are rate limited per minute
+
+
+def _http_post(url: str, headers: dict[str, str], body: dict, timeout: float = 30.0,
+               sleep: Callable[[float], None] = time.sleep) -> dict:
     req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8"), headers=headers, method="POST")
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - fixed https endpoint
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:   # report the status only: never echo the request (it carries the key header)
-        raise RuntimeError(f"Gemini request failed (HTTP {exc.code})") from None
-    except (urllib.error.URLError, TimeoutError) as exc:
-        raise RuntimeError(f"Gemini request failed ({type(exc).__name__})") from None
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 - fixed https endpoint
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:   # report the status only: never echo the request (it carries the key header)
+            if exc.code in RETRY_STATUSES and attempt < MAX_ATTEMPTS:
+                sleep(BACKOFF_SECONDS * 2 ** (attempt - 1))
+                continue
+            raise RuntimeError(f"Gemini request failed (HTTP {exc.code})") from None
+        except (urllib.error.URLError, TimeoutError) as exc:
+            raise RuntimeError(f"Gemini request failed ({type(exc).__name__})") from None
+    raise RuntimeError("Gemini request failed")   # unreachable; keeps the type checker satisfied
 
 
 class GeminiProvider:

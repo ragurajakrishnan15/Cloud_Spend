@@ -1,5 +1,10 @@
 """CloudSpend AI - home page."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))  # `cloudspend` / `config` importable without pip install
+
 import pandas as pd
 import streamlit as st
 

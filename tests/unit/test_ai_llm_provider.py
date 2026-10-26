@@ -114,3 +114,45 @@ def test_a_failing_gemini_call_falls_back_to_the_deterministic_answer(bundle):
 
     ans = answer("How much did we spend?", bundle, Filters(date(2025, 3, 1), date(2025, 3, 31)), GeminiProvider(api_key="k", post=boom))
     assert ans.mode == "deterministic" and ans.status == "ok" and ans.warnings
+
+
+def test_gemini_retries_rate_limits_then_succeeds():
+    import io
+    import urllib.error
+
+    from cloudspend.ai import llm as m
+    calls, waits = [], []
+
+    class Resp(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def fake_urlopen(req, timeout=0):
+        calls.append(1)
+        if len(calls) < 3:
+            raise urllib.error.HTTPError("u", 429, "slow down", {}, None)
+        return Resp(b'{"candidates": []}')
+
+    orig = m.urllib.request.urlopen
+    m.urllib.request.urlopen = fake_urlopen
+    try:
+        assert m._http_post("https://x", {}, {}, sleep=waits.append) == {"candidates": []}
+    finally:
+        m.urllib.request.urlopen = orig
+    assert len(calls) == 3 and waits == [4.0, 8.0]
+
+
+def test_gemini_gives_up_after_max_attempts():
+    import urllib.error
+
+    from cloudspend.ai import llm as m
+    orig = m.urllib.request.urlopen
+    m.urllib.request.urlopen = lambda *a, **k: (_ for _ in ()).throw(urllib.error.HTTPError("u", 429, "x", {}, None))
+    try:
+        with pytest.raises(RuntimeError, match="HTTP 429"):
+            m._http_post("https://x", {}, {}, sleep=lambda s: None)
+    finally:
+        m.urllib.request.urlopen = orig
